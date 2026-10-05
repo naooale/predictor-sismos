@@ -635,3 +635,76 @@ html, body {
     display: inline-block;
     animation: spin 1s linear infinite;
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Hide legend to save space */
+    .leyenda-widget {
+        display: none !important;
+    }
+    
+    /* Move left widgets to top */
+    .left-widgets {
+        bottom: auto;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .widget-card {
+        width: 100%;
+        max-width: 350px;
+        padding: 12px;
+    }
+
+    /* RIGHT SIDEBAR - Turn it into a bottom sheet */
+    .right-sidebar {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 60vh; /* Takes up bottom 60% of screen */
+        border-radius: 24px 24px 0 0;
+        border-left: none;
+        border-top: 1px solid var(--panel-border);
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
+    }
+    
+    .sidebar-header {
+        padding: 16px;
+        padding-top: 20px;
+    }
+    
+    .sidebar-header h1 {
+        font-size: 1rem !important;
+    }
+    
+    .meta-section {
+        padding: 16px;
+    }
+    
+    .zone-list {
+        padding: 0 16px;
+    }
+    
+    /* Move theme toggle so it doesn't overlap on small screens */
+    .theme-toggle-btn {
+        top: 10px !important;
+        right: 10px !important;
+    }
+    
+    /* Toast notification position */
+    .toast-notification {
+        bottom: 65vh; /* Above the bottom sheet */
+    }
+    
+    /* Hide map zoom controls on mobile to save space */
+    .leaflet-control-zoom {
+        display: none !important;
+    }
+}
