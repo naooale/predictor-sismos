@@ -13,7 +13,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- App Styles -->
-    <link rel="stylesheet" href="css/styles.css?v=14">
+    <link rel="stylesheet" href="css/styles.css?v=15">
 </head>
 <body>
 
@@ -69,7 +69,12 @@
     </div>
 
     <!-- RIGHT SIDEBAR -->
-    <aside class="right-sidebar">
+    <aside class="right-sidebar collapsed">
+        <!-- Handle para móvil -->
+        <div class="sidebar-toggle-mobile" onclick="toggleMobileSidebar()">
+            <div class="drag-handle"></div>
+            <span id="sidebarToggleText">Ver Pronósticos</span>
+        </div>
         
         <div class="sidebar-header" style="text-align: center; justify-content: center; flex-direction: column; align-items: center; gap: 8px; position: relative; padding-top: 40px;">
             <button id="btnThemeToggle" class="theme-toggle-btn" title="Cambiar tema" style="position: absolute; right: 16px; top: 16px;">☀️</button>
@@ -158,7 +163,7 @@
 
     <!-- SCRIPTS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="js/app.js?v=10"></script>
+    <script src="js/app.js?v=11"></script>
     <script src="js/mapa.js?v=6"></script>
     <script src="js/graficos.js?v=3"></script>
 </body>
