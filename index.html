@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Sismos UA | Monitor Interactivo</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- App Styles -->
+    <link rel="stylesheet" href="css/styles.css?v=14">
+</head>
+<body>
+
+    <!-- MAP CONTAINER -->
+    <div id="peruMap"></div>
+
+    <!-- LEFT WIDGETS -->
+    <div class="left-widgets">
+        
+        <!-- Último Sismo Widget -->
+        <div class="widget-card sismo-widget" id="ultimoSismoWidget" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+            <div class="w-header">
+                <span class="pulse-red"></span> ÚLTIMO SISMO IGP
+            </div>
+            <div class="w-body">
+                <div class="mag-container">
+                    <span id="quakeMagBadge" class="mag-value">3.6</span>
+                    <span class="mag-unit">MAG<br>MW</span>
+                </div>
+                <div class="sismo-details">
+                    <span class="pin-icon">📍</span>
+                    <div class="sismo-loc-time">
+                        <div id="quakeLocation" class="sismo-loc">A 6 km al N de Callahuanca, Lima</div>
+                        <div class="sismo-time">🕒 <span id="quakeDateTime">02/10/2026, 06:05 p. m.</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-footer">
+                <a href="https://ultimosismos.igp.gob.pe/" id="quakeIgpLink" target="_blank" onclick="event.stopPropagation();">Ver reporte oficial ↗</a>
+            </div>
+        </div>
+
+        <!-- Leyenda Riesgo Widget -->
+        <div class="widget-card leyenda-widget">
+            <div class="w-header-title">NIVEL DE RIESGO</div>
+            <div class="leyenda-list">
+                <div class="l-item"><span class="dot c-critico"></span> Crítico (≥30%)</div>
+                <div class="l-item"><span class="dot c-muyalto"></span> Muy alto (20-30%)</div>
+                <div class="l-item"><span class="dot c-alto"></span> Alto (12-20%)</div>
+                <div class="l-item"><span class="dot c-leve"></span> Moderado (5-12%)</div>
+            </div>
+            <div class="separator"></div>
+            <div class="leyenda-list">
+                <div class="l-item"><span class="icon-star">★</span> Último sismo IGP</div>
+                <div class="l-item"><span class="icon-pin">📍</span> Sismos >= 4.0 en la semana</div>
+            </div>
+            <div class="leyenda-info">
+                Indicador comparativo (sismos >= M4.0)<br>
+                Ventana: 7 días
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="right-sidebar">
+        
+        <div class="sidebar-header" style="text-align: center; justify-content: center; flex-direction: column; align-items: center; gap: 8px; position: relative; padding-top: 40px;">
+            <button id="btnThemeToggle" class="theme-toggle-btn" title="Cambiar tema" style="position: absolute; right: 16px; top: 16px;">☀️</button>
+            <h1 style="font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; margin: 0; line-height: 1.3; color: var(--ua-orange); padding: 0 16px;">SISTEMA DE PREDICCIÓN DE SISMOS UA</h1>
+            <div class="status-row" style="justify-content: center;">
+                <span class="dot-green"></span> Sistema Operativo
+            </div>
+        </div>
+
+        <div class="meta-section">
+            <div class="meta-row">
+                <span class="meta-label">Actualización:</span>
+                <span class="meta-val" id="metaUpdateDate">28/09/2026. 12:15 a. m.</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">Datos usados hasta:</span>
+                <span class="meta-val">27/09/2026</span>
+            </div>
+            <div class="vigencia-box">
+                <span class="icon">📅</span> VIGENCIA DEL PRONÓSTICO: <strong id="metaValidityRange" style="margin-left:auto;">28 set. al 4 oct.</strong>
+            </div>
+            <div class="alerta-critica">
+                <span class="icon-warning">⚠️</span>
+                <div>
+                    <strong>NIVEL CRÍTICO LOCAL:</strong> Una o más zonas presentan valores de riesgo > 25%. Se recomienda revisar planes de emergencia y fuentes oficiales (INDECI / IGP).
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="tab-ciudadana">VISIÓN CIUDADANA</button>
+            <button class="tab-btn" data-tab="tab-cientifico">PANEL CIENTÍFICO</button>
+        </div>
+
+        <div class="tab-content active" id="tab-ciudadana">
+            <div class="zonas-header">
+                <span class="zonas-title"><span id="countAll">25</span> ZONAS DETECTADAS</span>
+                <div class="zonas-actions">
+                    <button class="icon-btn" id="btnActualizarDatos" title="Actualizar datos">🔄</button>
+                </div>
+            </div>
+
+            <div class="info-text">
+                Las zonas del mapa muestran la probabilidad estimada de que ocurra un sismo de magnitud ≥ 4.0 en los próximos 7 días. Toca una zona para ver el detalle.
+            </div>
+
+            <div class="search-row">
+                <input type="text" id="zoneSearchInput" placeholder="Buscar por lugar, coordenadas...">
+                <select id="riskFilterSelect" class="filter-select">
+                    <option value="all">Todos los niveles</option>
+                    <option value="Crítico">Crítico</option>
+                    <option value="Muy Alto">Muy Alto</option>
+                    <option value="Alto">Alto</option>
+                    <option value="Leve">Moderado</option>
+                </select>
+            </div>
+
+            <div class="zone-list" id="zoneCardsContainer">
+                <!-- Tarjetas de zonas renderizadas por JS -->
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-cientifico" style="display:none; padding: 20px;">
+            <div style="color: #8b949e; font-size: 0.9rem;">
+                <!-- Panel científico (oculto en el clon visual principal, pero mantenido para que app.js no falle) -->
+                Métricas del modelo predictivo...
+                <br><br>
+                Zonas evaluadas: <span id="sciZonesCount"></span><br>
+                Probabilidad Máxima: <span id="sciMaxProb"></span> (<span id="sciMaxZone"></span>)<br>
+                Probabilidad Promedio: <span id="sciAvgProb"></span><br>
+                <div style="margin-top:20px;">
+                    <canvas id="probChartCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="footer-content">
+                <span class="icon-info">i</span> INFORMACIÓN IMPORTANTE
+            </div>
+        </div>
+    </aside>
+
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="toast-notification"></div>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/app.js?v=10"></script>
+    <script src="js/mapa.js?v=6"></script>
+    <script src="js/graficos.js?v=3"></script>
+</body>
+</html>
