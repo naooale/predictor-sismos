@@ -101,87 +101,15 @@ async function cargarPronosticos() {
         const data = await respuesta.json();
         procesarDatosPronostico(data);
     } catch (error) {
-        console.warn("Backend no disponible (ej: en Netlify). Cargando datos de simulación...", error);
-        
-        // DATOS DE SIMULACIÓN SI EL BACKEND PYTHON NO ESTÁ DISPONIBLE
-        const dummyData = {
-            "metadata": {
-                "fecha_actualizacion": "04 Oct 2026, 22:50 PET",
-                "ventana_validez": "04 Oct 2026 - 11 Oct 2026",
-                "zonas_evaluadas": 6,
-                "prob_maxima": 34.8,
-                "prob_promedio": 18.5
-            },
-            "zonas": [
-                {
-                    "id": "costa-central-lima",
-                    "nombre": "Costa Central - Lima y Callao",
-                    "departamento": "Lima",
-                    "lat": -12.05,
-                    "lon": -77.04,
-                    "probabilidad": 34.8,
-                    "nivel_riesgo": "Crítico",
-                    "color": "#ff334b",
-                    "acoplamiento": "Alto (>85%) - Parche de aspereza central",
-                    "silencio_sismico": "280 años (Sismo de 1746)",
-                    "ultimo_sismo": "Hace 2 días (M 4.2)"
-                },
-                {
-                    "id": "sur-extremo",
-                    "nombre": "Sur Extremo - Moquegua, Ilo y Tacna",
-                    "departamento": "Moquegua",
-                    "lat": -17.80,
-                    "lon": -70.90,
-                    "probabilidad": 31.4,
-                    "nivel_riesgo": "Crítico",
-                    "color": "#ff334b",
-                    "acoplamiento": "Muy Alto (>90%)",
-                    "silencio_sismico": "156 años (Sismo de 1868)",
-                    "ultimo_sismo": "Hace 5 días (M 4.5)"
-                },
-                {
-                    "id": "arequipa-camana",
-                    "nombre": "Arequipa - Camaná, Mollendo y Ocoña",
-                    "departamento": "Arequipa",
-                    "lat": -16.62,
-                    "lon": -72.71,
-                    "probabilidad": 29.2,
-                    "nivel_riesgo": "Muy Alto",
-                    "color": "#ff6b35",
-                    "acoplamiento": "Moderado-Alto",
-                    "silencio_sismico": "23 años (Sismo de 2001)",
-                    "ultimo_sismo": "Hace 1 día (M 3.8)"
-                },
-                {
-                    "id": "ica-nazca",
-                    "nombre": "Ica - Pisco, Chincha y Nazca",
-                    "departamento": "Ica",
-                    "lat": -14.15,
-                    "lon": -75.95,
-                    "probabilidad": 18.5,
-                    "nivel_riesgo": "Alto",
-                    "color": "#f7c948",
-                    "acoplamiento": "Relajado (Parcial)",
-                    "silencio_sismico": "17 años (Sismo de 2007)",
-                    "ultimo_sismo": "Hace 12 horas (M 4.1)"
-                },
-                {
-                    "id": "norte-piura",
-                    "nombre": "Norte - Piura, Tumbes y Sullana",
-                    "departamento": "Piura",
-                    "lat": -5.10,
-                    "lon": -81.00,
-                    "probabilidad": 10.2,
-                    "nivel_riesgo": "Leve",
-                    "color": "#20c997",
-                    "acoplamiento": "Bajo (Zona de subducción transicional)",
-                    "silencio_sismico": "194 años",
-                    "ultimo_sismo": "Hace 3 días (M 3.9)"
-                }
-            ]
-        };
-        procesarDatosPronostico(dummyData);
-        mostrarNotificacion("⚠️ Backend desconectado. Mostrando datos simulados.");
+        console.error("Error al cargar pronósticos:", error);
+        if (container) {
+            container.innerHTML = `
+                <div class="loading-state" style="color:#ff6b35;">
+                    <span>⚠️ No se pudieron cargar los pronósticos del servidor en vivo.</span>
+                    <button class="topbar-btn" onclick="cargarPronosticos()">Reintentar</button>
+                </div>
+            `;
+        }
     }
 }
 
@@ -215,21 +143,7 @@ async function cargarUltimoSismoIGP() {
         const sismo = await respuesta.json();
         procesarUltimoSismo(sismo);
     } catch (error) {
-        console.warn("Backend no disponible (ej: en Netlify). Cargando último sismo de simulación...", error);
-        const dummySismo = {
-            "fuente": "USGS (Simulado)",
-            "fecha": "04/10/2026",
-            "hora_local": "15:20:00 PET",
-            "hace_tiempo": "Hace 1h 30m",
-            "magnitud": 4.5,
-            "profundidad_km": 45.0,
-            "epicentro": "42 km WNW de Puerto Bolívar, Ecuador",
-            "departamento": "Tumbes/Ecuador",
-            "latitud": -3.1,
-            "longitud": -80.3,
-            "enlace_igp": "https://ultimosismos.igp.gob.pe/"
-        };
-        procesarUltimoSismo(dummySismo);
+        console.error("Error al cargar último sismo IGP:", error);
     }
 }
 
