@@ -261,6 +261,20 @@ function procesarUltimoSismo(sismo) {
     }
 }
 
+// Función para colapsar/expandir el panel en celulares
+window.toggleMobileSidebar = function() {
+    const sidebar = document.querySelector('.right-sidebar');
+    const toggleText = document.getElementById('sidebarToggleText');
+    if (!sidebar) return;
+    
+    sidebar.classList.toggle('collapsed');
+    
+    if (sidebar.classList.contains('collapsed')) {
+        toggleText.textContent = "Ver Pronósticos";
+    } else {
+        toggleText.textContent = "Ocultar Pronósticos";
+    }
+};
 function actualizarMetricasCientificas(meta, zonas) {
     const elCount = document.getElementById("sciZonesCount");
     const elMax = document.getElementById("sciMaxProb");

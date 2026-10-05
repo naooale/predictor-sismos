@@ -636,6 +636,11 @@ html, body {
     animation: spin 1s linear infinite;
 }
 
+/* Ocultar botón de móvil en PC */
+.sidebar-toggle-mobile {
+    display: none;
+}
+
 /* ==========================================================================
    MOBILE RESPONSIVENESS
    ========================================================================== */
@@ -643,6 +648,62 @@ html, body {
     /* Hide legend to save space */
     .leyenda-widget {
         display: none !important;
+    }
+    
+    /* Toggle button on mobile */
+    .sidebar-toggle-mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid var(--panel-border);
+    }
+    .drag-handle {
+        width: 40px;
+        height: 5px;
+        background: var(--text-secondary);
+        border-radius: 10px;
+        margin-bottom: 5px;
+    }
+    .sidebar-toggle-mobile span {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* RIGHT SIDEBAR - Turn it into a bottom sheet */
+    .right-sidebar {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 60vh; /* Takes up bottom 60% of screen */
+        border-radius: 24px 24px 0 0;
+        border-left: none;
+        border-top: 1px solid var(--panel-border);
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
+        transition: transform 0.3s ease, height 0.3s ease;
+    }
+
+    /* COLLAPSED STATE */
+    .right-sidebar.collapsed {
+        height: 60px !important;
+        overflow: hidden;
+    }
+    
+    .right-sidebar.collapsed .sidebar-header,
+    .right-sidebar.collapsed .meta-section,
+    .right-sidebar.collapsed .tabs,
+    .right-sidebar.collapsed .zone-list,
+    .right-sidebar.collapsed .sidebar-footer {
+        opacity: 0;
+        pointer-events: none;
+        display: none;
     }
     
     /* Move left widgets to top */
@@ -659,20 +720,6 @@ html, body {
         width: 100%;
         max-width: 350px;
         padding: 12px;
-    }
-
-    /* RIGHT SIDEBAR - Turn it into a bottom sheet */
-    .right-sidebar {
-        top: auto;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        height: 60vh; /* Takes up bottom 60% of screen */
-        border-radius: 24px 24px 0 0;
-        border-left: none;
-        border-top: 1px solid var(--panel-border);
-        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
     }
     
     .sidebar-header {
