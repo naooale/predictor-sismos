@@ -172,6 +172,39 @@ function procesarUltimoSismo(sismo) {
     const widgetSismo = document.getElementById("ultimoSismoWidget");
     if (widgetSismo) {
         widgetSismo.onclick = () => enfocarUltimoSismoEnMapa(sismo);
+        
+        // AUTO OCULTAR EN MODO CELULAR (Comportamiento tipo notificación profesional)
+        if (window.innerWidth <= 768) {
+            // Animación suave de entrada original
+            widgetSismo.style.transition = "opacity 0.8s ease, transform 0.8s ease";
+            
+            // Ocultar después de 6 segundos
+            let autoHideTimer = setTimeout(() => {
+                widgetSismo.style.opacity = "0";
+                widgetSismo.style.transform = "translateY(-20px)"; // Se va para arriba solo
+                setTimeout(() => widgetSismo.style.display = "none", 800);
+            }, 6000);
+
+            // GESTO: Deslizar a la izquierda para ocultar (Swipe to dismiss)
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            widgetSismo.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            widgetSismo.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                // Si deslizó hacia la izquierda más de 40px
+                if (touchStartX - touchEndX > 40) {
+                    clearTimeout(autoHideTimer); // Cancelar el timer automático
+                    widgetSismo.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+                    widgetSismo.style.opacity = "0";
+                    widgetSismo.style.transform = "translateX(-100px)"; // Se va para la izquierda
+                    setTimeout(() => widgetSismo.style.display = "none", 300);
+                }
+            }, {passive: true});
+        }
     }
 }
 
