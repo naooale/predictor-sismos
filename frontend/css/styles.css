@@ -743,6 +743,15 @@ html, body {
     
     .zone-list {
         padding: 0 16px;
+        flex: none !important;
+        height: auto !important;
+    }
+    
+    /* Permite que todo el panel haga scroll junto, no solo la lista */
+    .tab-content {
+        overflow-y: visible !important;
+        flex: none !important;
+        height: auto !important;
     }
     
     /* Move theme toggle so it doesn't overlap on small screens */
