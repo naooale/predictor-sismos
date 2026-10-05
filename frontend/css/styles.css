@@ -1,0 +1,637 @@
+/* ==========================================================================
+   QUAKE FORECAST AI | PRONÓSTICO SÍSMICO PERÚ (Clon proximosismo.org)
+   ========================================================================== */
+
+:root {
+    --bg-main: #0b0f19;
+    --sidebar-bg: #151b23;
+    --sidebar-width: 440px;
+    
+    --text-primary: #e6edf3;
+    --text-secondary: #848d97;
+    --text-muted: #7d8590;
+    
+    --color-critico: #ff334b;
+    --color-muy-alto: #ff6b35;
+    --color-alto: #f7c948;
+    --color-leve: #20c997;
+    
+    --border-color: #30363d;
+    --ua-orange: #f36c21;
+    --blue-light: #58a6ff;
+
+    --panel-bg: rgba(13, 17, 23, 0.35);
+    --panel-border: rgba(255, 255, 255, 0.1);
+}
+
+body.light-theme {
+    --bg-main: #f0f2f5;
+    --sidebar-bg: rgba(255, 255, 255, 0.55);
+    --text-primary: #000000;
+    --text-secondary: #1f2937;
+    --text-muted: #374151;
+    --border-color: #d1d5db;
+    --panel-bg: rgba(255, 255, 255, 0.45);
+    --panel-border: rgba(0, 0, 0, 0.15);
+}
+
+body.light-theme .info-text,
+body.light-theme #zoneSearchInput,
+body.light-theme .filter-select,
+body.light-theme .footer-content {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.theme-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    color: var(--text-primary);
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   MAPA
+   ========================================================================== */
+#peruMap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-color: #050505;
+}
+
+/* ==========================================================================
+   WIDGETS IZQUIERDOS (FLOTANTES)
+   ========================================================================== */
+.left-widgets {
+    position: absolute;
+    left: 20px;
+    bottom: 40px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.widget-card {
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 16px;
+    width: 280px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.sismo-widget {
+    border: 1px solid rgba(255, 51, 75, 0.4);
+}
+
+.w-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.pulse-red {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-critico);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--color-critico);
+}
+
+.w-body {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.mag-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mag-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.mag-unit {
+    font-size: 0.55rem;
+    color: var(--text-secondary);
+    line-height: 1.2;
+    font-weight: 600;
+}
+
+.sismo-details {
+    display: flex;
+    gap: 8px;
+}
+
+.pin-icon {
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+.sismo-loc-time {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sismo-loc {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.sismo-time {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.w-footer {
+    text-align: right;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 10px;
+}
+
+.w-footer a {
+    color: var(--ua-orange);
+    font-size: 0.75rem;
+    text-decoration: none;
+}
+
+.w-footer a:hover {
+    text-decoration: underline;
+}
+
+/* LEYENDA */
+.leyenda-widget {
+    border: 1px solid rgba(243, 108, 33, 0.3);
+}
+
+.w-header-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--ua-orange);
+    margin-bottom: 12px;
+}
+
+.leyenda-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.l-item {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.c-critico { background: var(--color-critico); }
+.c-muyalto { background: var(--color-muy-alto); }
+.c-alto { background: var(--color-alto); }
+.c-leve { background: var(--color-leve); }
+
+.separator {
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+    margin: 10px 0;
+}
+
+.icon-star { color: var(--blue-light); font-size: 0.9rem; }
+.icon-pin { font-size: 0.9rem; }
+
+.leyenda-info {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   RIGHT SIDEBAR
+   ========================================================================== */
+.right-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--sidebar-width);
+    height: 100%;
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-left: 1px solid var(--panel-border);
+    border-radius: 24px 0 0 24px;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.title-row h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.badge-version {
+    background: #1f6feb;
+    color: var(--text-primary);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.status-row {
+    font-size: 0.8rem;
+    color: var(--color-leve);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot-green {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-leve);
+    border-radius: 50%;
+}
+
+.meta-section {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.8rem;
+}
+
+.meta-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.meta-label { color: var(--text-secondary); }
+.meta-val { color: var(--text-primary); font-weight: 500; }
+
+.vigencia-box {
+    background: rgba(243, 108, 33, 0.15);
+    border: 1px solid rgba(243, 108, 33, 0.3);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    font-size: 0.75rem;
+}
+
+.alert-box {
+    background: rgba(255, 51, 75, 0.1);
+    border: 1px solid var(--color-critico);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    color: var(--color-critico);
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.tabs-container {
+    display: flex;
+    justify-content: center;
+    padding: 16px 24px 0 24px;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 16px;
+}
+
+.tab-btn.active {
+    background: rgba(243, 108, 33, 0.1);
+    border-color: var(--ua-orange);
+    color: var(--ua-orange);
+}
+
+.tab-content {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-content::-webkit-scrollbar { width: 6px; }
+.tab-content::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+.zonas-header {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.zonas-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.zonas-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.info-text {
+    margin: 0 24px 16px 24px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.search-row {
+    padding: 0 24px 16px 24px;
+    display: flex;
+    gap: 8px;
+}
+
+#zoneSearchInput {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+}
+
+.filter-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 12px;
+    border-radius: 20px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+}
+
+.filter-select option {
+    background: var(--bg-main);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   ZONE CARDS (Minimalist list)
+   ========================================================================== */
+.zone-list {
+    flex: 1;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.zone-item {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.zone-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.z-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.z-info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.z-index {
+    color: var(--color-critico);
+    font-weight: 800;
+    font-size: 0.9rem;
+}
+
+.z-name {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.z-pin {
+    font-size: 0.8rem;
+}
+
+.z-risk {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 60px;
+}
+
+.z-pct {
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.z-bar-bg {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+.z-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+}
+
+.z-meta-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding-left: 26px; /* align with text */
+}
+
+.z-mag-box {
+    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.05);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+.z-coords {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.sidebar-footer {
+    padding: 12px 24px;
+    background: transparent;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-content {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+.icon-info {
+    background: var(--ua-orange);
+    color: var(--text-primary);
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.6rem;
+}
+
+/* ==========================================================================
+   TOAST NOTIFICATION & ANIMATIONS
+   ========================================================================== */
+.toast-notification {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #238636;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.icon-spin {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
