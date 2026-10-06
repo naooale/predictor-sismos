@@ -744,12 +744,24 @@ function initMobileBottomSheet() {
     let isDragging = false;
     let startHeight = 0;
 
+    let wasCollapsed = false;
+
     handle.addEventListener('touchstart', (e) => {
         startY = e.touches[0].clientY;
         startHeight = sidebar.getBoundingClientRect().height;
         isDragging = true;
-        // Quitar la transición para que siga al dedo instantáneamente
+        
+        // Si estaba colapsado, le quitamos la clase temporalmente 
+        // y fijamos la altura en 60 para que pueda crecer dinámicamente
+        wasCollapsed = sidebar.classList.contains('collapsed');
+        if (wasCollapsed) {
+            sidebar.classList.remove('collapsed');
+            sidebar.style.height = '60px';
+        }
+        
+        // Quitar la transición para que siga al dedo instantáneamente y evitar scroll interno mientras arrastra
         sidebar.style.transition = 'none'; 
+        sidebar.style.overflow = 'hidden';
     }, { passive: true });
 
     handle.addEventListener('touchmove', (e) => {
@@ -772,12 +784,22 @@ function initMobileBottomSheet() {
         if (!isDragging) return;
         isDragging = false;
         
-        // Restaurar la transición CSS suave
+        // Restaurar la transición CSS suave y el overflow
         sidebar.style.transition = 'transform 0.3s ease, height 0.3s ease';
+        sidebar.style.overflow = '';
 
         // Si fue solo un "tap" rápido sin mover el dedo, lo tratamos como un clic
         if (Math.abs(currentY - startY) < 10 || currentY === 0) {
-            window.toggleMobileSidebar();
+            sidebar.style.height = ''; 
+            if (wasCollapsed) {
+                // Estaba cerrado, el tap lo abre
+                sidebar.classList.remove('collapsed');
+                document.getElementById('sidebarToggleText').textContent = "Ocultar Pronósticos";
+            } else {
+                // Estaba abierto, el tap lo cierra
+                sidebar.classList.add('collapsed');
+                document.getElementById('sidebarToggleText').textContent = "Ver Pronósticos";
+            }
             currentY = 0;
             return;
         }
