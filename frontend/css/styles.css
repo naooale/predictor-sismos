@@ -636,8 +636,8 @@ html, body {
     animation: spin 1s linear infinite;
 }
 
-/* Ocultar botón de móvil en PC */
-.sidebar-toggle-mobile {
+/* Ocultar botón de móvil y topbar en PC */
+.sidebar-toggle-mobile, .mobile-topbar {
     display: none;
 }
 
@@ -645,6 +645,47 @@ html, body {
    MOBILE RESPONSIVENESS
    ========================================================================== */
 @media (max-width: 768px) {
+    /* MOBILE TOP BAR */
+    .mobile-topbar {
+        display: flex;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 60px;
+        background: var(--panel-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        z-index: 2000;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--panel-border);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .mobile-topbar .brand {
+        display: flex;
+        align-items: center;
+        font-weight: 800;
+        color: var(--ua-orange);
+        letter-spacing: 0.5px;
+    }
+    
+    /* Move left widgets down to account for topbar */
+    .left-widgets {
+        top: 75px !important;
+        bottom: auto;
+        left: 15px;
+        right: 15px;
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    /* Ocultar el título de la sidebar porque ya está en el topbar */
+    .right-sidebar .sidebar-header h1,
+    .right-sidebar .sidebar-header .status-row,
+    .right-sidebar .sidebar-header .theme-toggle-btn {
+        display: none !important;
+    }
+
     /* Hide legend to save space */
     .leyenda-widget {
         display: none !important;
@@ -710,16 +751,6 @@ html, body {
         opacity: 0;
         pointer-events: none;
         display: none;
-    }
-    
-    /* Move left widgets to top */
-    .left-widgets {
-        bottom: auto;
-        top: 15px;
-        left: 15px;
-        right: 15px;
-        flex-direction: row;
-        justify-content: center;
     }
     
     .widget-card {

@@ -67,23 +67,25 @@ function mostrarNotificacion(mensaje) {
 }
 
 function configurarThemeToggle() {
-    const btn = document.getElementById("btnThemeToggle");
-    if (!btn) return;
-    
+    const btns = [document.getElementById("btnThemeToggle"), document.getElementById("mobileThemeToggle")];
     let isLight = false;
-    btn.addEventListener("click", () => {
-        isLight = !isLight;
-        if (isLight) {
-            document.body.classList.add("light-theme");
-            btn.textContent = "🌙";
-        } else {
-            document.body.classList.remove("light-theme");
-            btn.textContent = "☀️";
-        }
-        
-        if (window.toggleMapTheme) {
-            window.toggleMapTheme(isLight);
-        }
+    
+    btns.forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener("click", () => {
+            isLight = !isLight;
+            if (isLight) {
+                document.body.classList.add("light-theme");
+                btns.forEach(b => { if(b) b.textContent = "🌙"; });
+            } else {
+                document.body.classList.remove("light-theme");
+                btns.forEach(b => { if(b) b.textContent = "☀️"; });
+            }
+            
+            if (window.toggleMapTheme) {
+                window.toggleMapTheme(isLight);
+            }
+        });
     });
 }
 
@@ -93,6 +95,7 @@ function configurarThemeToggle() {
 
 async function cargarPronosticos() {
     const container = document.getElementById("zoneCardsContainer");
+    const splash = document.getElementById("splashScreen");
 
     try {
         const respuesta = await fetch("/api/pronosticos");
@@ -100,12 +103,27 @@ async function cargarPronosticos() {
 
         const data = await respuesta.json();
         procesarDatosPronostico(data);
+        
+        if (splash) {
+            splash.style.opacity = "0";
+            setTimeout(() => splash.style.display = "none", 500);
+        }
     } catch (error) {
         console.error("Error al cargar pronósticos:", error);
+        
+        if (splash) {
+            splash.innerHTML = `
+                <span style="font-size: 3rem; margin-bottom: 20px;">❌</span>
+                <h2 style="color: #ff334b; margin: 0;">Error de Conexión</h2>
+                <p style="color: var(--text-secondary); text-align: center; max-width: 300px;">No se pudo conectar al servidor. Si está inactivo, Render puede tardar hasta 1 minuto en despertar.</p>
+                <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: var(--ua-orange); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">Reintentar</button>
+            `;
+        }
+        
         if (container) {
             container.innerHTML = `
                 <div class="loading-state" style="color:#ff6b35;">
-                    <span>⚠️ No se pudieron cargar los pronósticos del servidor en vivo.</span>
+                    <span>⚠️ No se pudieron cargar los pronósticos.</span>
                     <button class="topbar-btn" onclick="cargarPronosticos()">Reintentar</button>
                 </div>
             `;
