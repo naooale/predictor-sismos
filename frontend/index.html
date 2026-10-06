@@ -170,11 +170,33 @@
         </div>
 
         <div class="sidebar-footer">
-            <div class="footer-content">
+            <div class="footer-content" id="btnOpenInfoImportante" style="cursor: pointer; transition: background 0.2s; padding: 12px; border-radius: 8px;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
                 <span class="icon-info">i</span> INFORMACIÓN IMPORTANTE
             </div>
         </div>
     </aside>
+
+    <!-- Modal Información Importante -->
+    <div id="modalInfoImportante" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 style="color: var(--ua-orange); margin-top: 0; display: flex; align-items: center; gap: 8px;">
+                <span class="icon-info" style="width: 30px; height: 30px; font-size: 1rem;">i</span> Aviso Importante
+            </h2>
+            <p style="font-size: 1.05rem; line-height: 1.5; color: var(--text-primary);"><strong>Los sismos no se pueden predecir con exactitud.</strong></p>
+            <p style="color: var(--text-secondary); line-height: 1.5;">Este sistema es una <strong>herramienta experimental y educativa</strong> que utiliza modelos matemáticos de acoplamiento tectónico y datos históricos del IGP (Instituto Geofísico del Perú) para <i>estimar probabilidades</i> en zonas de silencio sísmico.</p>
+            <p style="color: var(--text-secondary); line-height: 1.5;"><strong>Nunca debe ser utilizado como un sistema de alerta temprana oficial.</strong> Para información oficial y alertas, consulte siempre al <a href="https://www.igp.gob.pe" target="_blank" style="color: var(--text-primary); text-decoration: underline;">IGP</a> y al <a href="https://www.indeci.gob.pe/" target="_blank" style="color: var(--text-primary); text-decoration: underline;">INDECI</a>.</p>
+            
+            <div style="background: rgba(255, 107, 53, 0.1); padding: 16px; border-left: 4px solid var(--ua-orange); border-radius: 4px; margin-top: 20px;">
+                <strong style="color: var(--text-primary);">Recomendaciones de Seguridad:</strong>
+                <ul style="margin: 10px 0 0 0; padding-left: 20px; color: var(--text-secondary); line-height: 1.6;">
+                    <li>Ten siempre lista tu <strong>Mochila de Emergencia</strong>.</li>
+                    <li>Identifica las <strong>zonas seguras</strong> en tu hogar y centro de labores.</li>
+                    <li>Mantén la calma y usa <strong>mensajes de texto (SMS)</strong> o la línea 119 durante una emergencia.</li>
+                </ul>
+            </div>
+            <button id="btnCloseInfoImportante" class="topbar-btn" style="width: 100%; margin-top: 24px; padding: 14px; background: var(--ua-orange); color: white; font-weight: bold; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer;">Entendido</button>
+        </div>
+    </div>
 
     <!-- Toast Notification -->
     <div id="toastNotification" class="toast-notification"></div>

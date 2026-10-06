@@ -564,7 +564,20 @@ function configurarModales() {
         btnCloseGuide.addEventListener("click", () => modalGuide.classList.remove("open"));
     }
 
-    // 4. Toggle sidebar en dispositivos móviles
+    // 4. Modal Información Importante
+    const btnOpenInfo = document.getElementById("btnOpenInfoImportante");
+    const btnCloseInfo = document.getElementById("btnCloseInfoImportante");
+    const modalInfo = document.getElementById("modalInfoImportante");
+
+    if (btnOpenInfo && modalInfo) {
+        btnOpenInfo.addEventListener("click", () => modalInfo.classList.add("open"));
+    }
+
+    if (btnCloseInfo && modalInfo) {
+        btnCloseInfo.addEventListener("click", () => modalInfo.classList.remove("open"));
+    }
+
+    // 5. Toggle sidebar en dispositivos móviles
     const btnToggleSidebar = document.getElementById("btnToggleSidebar");
     const sidebar = document.getElementById("sidebar");
     if (btnToggleSidebar && sidebar) {
