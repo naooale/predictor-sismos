@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     configurarModales();
     configurarThemeToggle();
     configurarBotonActualizar();
+    initMobileBottomSheet(); // Iniciar Swipe de panel móvil
 });
 
 function configurarBotonActualizar() {
@@ -729,3 +730,74 @@ window.eliminarSismo = async function (id) {
         alert("No se pudo eliminar el sismo.");
     }
 };
+
+/* ==========================================================================
+   GESTIÓN DE BOTTOM SHEET (MOBILE SWIPE GESTURE)
+   ========================================================================== */
+function initMobileBottomSheet() {
+    const sidebar = document.querySelector('.right-sidebar');
+    const handle = document.querySelector('.sidebar-toggle-mobile');
+    if (!sidebar || !handle || window.innerWidth > 768) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+    let startHeight = 0;
+
+    handle.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+        startHeight = sidebar.getBoundingClientRect().height;
+        isDragging = true;
+        // Quitar la transición para que siga al dedo instantáneamente
+        sidebar.style.transition = 'none'; 
+    }, { passive: true });
+
+    handle.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentY = e.touches[0].clientY;
+        const deltaY = startY - currentY; // Positivo si arrastra hacia arriba
+        let newHeight = startHeight + deltaY;
+        
+        // Limites (60px mínimo, 85vh máximo)
+        const minHeight = 60;
+        const maxHeight = window.innerHeight * 0.85; 
+        
+        if (newHeight < minHeight) newHeight = minHeight;
+        if (newHeight > maxHeight) newHeight = maxHeight;
+
+        sidebar.style.height = `${newHeight}px`;
+    }, { passive: true });
+
+    handle.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        // Restaurar la transición CSS suave
+        sidebar.style.transition = 'transform 0.3s ease, height 0.3s ease';
+
+        // Si fue solo un "tap" rápido sin mover el dedo, lo tratamos como un clic
+        if (Math.abs(currentY - startY) < 10 || currentY === 0) {
+            window.toggleMobileSidebar();
+            currentY = 0;
+            return;
+        }
+
+        const currentHeight = sidebar.getBoundingClientRect().height;
+        const threshold = window.innerHeight * 0.35; // Umbral de decisión (35vh)
+        
+        // Limpiar el height en línea para que CSS controle el estado snap
+        sidebar.style.height = ''; 
+
+        if (currentHeight > threshold) {
+            // Deslizó lo suficiente hacia arriba -> Expandir
+            sidebar.classList.remove('collapsed');
+            document.getElementById('sidebarToggleText').textContent = "Ocultar Pronósticos";
+        } else {
+            // Deslizó hacia abajo -> Colapsar
+            sidebar.classList.add('collapsed');
+            document.getElementById('sidebarToggleText').textContent = "Ver Pronósticos";
+        }
+        
+        currentY = 0;
+    });
+}

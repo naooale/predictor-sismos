@@ -20,17 +20,17 @@
     <!-- MOBILE TOP BAR -->
     <div class="mobile-topbar">
         <div class="brand">
-            <span class="logo-text">SISMOS UA</span>
-            <span class="dot-green" style="margin-left: 6px;"></span>
+            <span class="logo-text">SISTEMA DE PREDICCIÓN DE SISMOS UA</span>
+            <span class="dot-green" style="margin-left: 6px; flex-shrink: 0;"></span>
         </div>
         <button id="mobileThemeToggle" class="theme-toggle-btn" title="Cambiar tema" style="position: static;">☀️</button>
     </div>
 
     <!-- LOADING SPLASH -->
-    <div id="splashScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease;">
+    <div id="splashScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; text-align: center; padding: 0 20px;">
         <span class="icon-spin" style="font-size: 3rem; color: var(--ua-orange); margin-bottom: 20px;">⚙️</span>
-        <h2 style="color: var(--ua-orange); letter-spacing: 1px; margin: 0;">SISMOS UA</h2>
-        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 8px;">Conectando al servidor (puede tardar unos segundos)...</p>
+        <h2 style="color: var(--ua-orange); letter-spacing: 1px; margin: 0; font-size: 1.2rem;">SISTEMA DE PREDICCIÓN DE SISMOS UA</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 12px;">Conectando al servidor (puede tardar unos segundos)...</p>
     </div>
 
     <!-- MAP CONTAINER -->
@@ -89,7 +89,7 @@
     <!-- RIGHT SIDEBAR -->
     <aside class="right-sidebar collapsed">
         <!-- Handle para móvil -->
-        <div class="sidebar-toggle-mobile" onclick="toggleMobileSidebar()">
+        <div class="sidebar-toggle-mobile">
             <div class="drag-handle"></div>
             <span id="sidebarToggleText">Ver Pronósticos</span>
         </div>

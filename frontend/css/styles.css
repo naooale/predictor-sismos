@@ -667,6 +667,11 @@ html, body {
         font-weight: 800;
         color: var(--ua-orange);
         letter-spacing: 0.5px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80%;
     }
     
     /* Move left widgets down to account for topbar */
